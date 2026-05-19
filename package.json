@@ -1,0 +1,27 @@
+{
+  "name": "complaint-management-service",
+  "version": "1.0.0",
+  "description": "Production-ready Express microservice for complaint management with DynamoDB",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "express",
+    "dynamodb",
+    "complaints",
+    "microservice"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.812.0",
+    "@aws-sdk/lib-dynamodb": "^3.812.0",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0"
+  }
+}

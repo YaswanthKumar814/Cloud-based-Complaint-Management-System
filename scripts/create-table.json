@@ -1,0 +1,16 @@
+{
+  "TableName": "Complaints",
+  "AttributeDefinitions": [
+    {
+      "AttributeName": "complaintId",
+      "AttributeType": "S"
+    }
+  ],
+  "KeySchema": [
+    {
+      "AttributeName": "complaintId",
+      "KeyType": "HASH"
+    }
+  ],
+  "BillingMode": "PAY_PER_REQUEST"
+}
