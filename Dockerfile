@@ -3,7 +3,9 @@ FROM node:22-alpine
 
 # Security: run as non-root in production
 ENV NODE_ENV=production \
-    PORT=5000
+    PORT=5000 \
+    AWS_REGION=ap-south-1 \
+    DYNAMODB_TABLE=Complaints
 
 WORKDIR /usr/src/app
 
