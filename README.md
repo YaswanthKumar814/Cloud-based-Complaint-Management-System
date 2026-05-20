@@ -39,7 +39,7 @@ npm install
 npm run dev
 ```
 
-Open **http://localhost:5173** — setup & testing: [docs/COGNITO_FRONTEND.md](docs/COGNITO_FRONTEND.md).
+Open **http://localhost:5173** — Cognito: [docs/COGNITO_FRONTEND.md](docs/COGNITO_FRONTEND.md). Admin dashboard: [docs/DASHBOARD.md](docs/DASHBOARD.md).
 
 Complaint AI (Amazon Comprehend): [docs/COMPREHEND_AI.md](docs/COMPREHEND_AI.md).
 

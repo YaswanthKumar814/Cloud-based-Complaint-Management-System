@@ -35,7 +35,7 @@ export default function App() {
   }
 
   return (
-    <div className="app">
+    <div className={`app ${auth.isAuthenticated ? 'app-wide' : ''}`}>
       {auth.isAuthenticated ? <DashboardPage /> : <LoginPage />}
     </div>
   );
