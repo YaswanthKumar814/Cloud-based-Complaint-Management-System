@@ -43,6 +43,8 @@ Open **http://localhost:5173** — setup & testing: [docs/COGNITO_FRONTEND.md](d
 
 Complaint AI (Amazon Comprehend): [docs/COMPREHEND_AI.md](docs/COMPREHEND_AI.md).
 
+Email/SNS notifications: [docs/NOTIFICATIONS.md](docs/NOTIFICATIONS.md).
+
 ## Verify Phase 2
 
 ```bash

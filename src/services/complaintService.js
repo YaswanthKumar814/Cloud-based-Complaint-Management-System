@@ -5,6 +5,10 @@ import { env } from '../config/env.js';
 import { HttpError } from '../utils/HttpError.js';
 import { mapAwsError } from '../utils/mapAwsError.js';
 import { analyzeComplaintText } from './aiAnalysisService.js';
+import {
+  notifyComplaintCreated,
+  notifyStatusUpdated,
+} from './notificationService.js';
 
 const TABLE = env.dynamodb.tableName;
 
@@ -47,6 +51,11 @@ export async function createComplaint({ title, description, category, fileUrl, f
   } catch (error) {
     mapAwsError(error, `DynamoDB table "${TABLE}"`);
   }
+
+  // Notifications are best-effort — never block the API response
+  notifyComplaintCreated(item).catch((err) => {
+    console.error('[notification] Unexpected error on create:', err.message);
+  });
 
   return item;
 }
@@ -109,7 +118,13 @@ export async function updateComplaintStatus(complaintId, status) {
         ReturnValues: 'ALL_NEW',
       }),
     );
-    return result.Attributes;
+    const updated = result.Attributes;
+
+    notifyStatusUpdated(updated).catch((err) => {
+      console.error('[notification] Unexpected error on status update:', err.message);
+    });
+
+    return updated;
   } catch (error) {
     if (error?.name === 'ConditionalCheckFailedException') {
       throw new HttpError(404, `No complaint found with id "${complaintId}"`);
