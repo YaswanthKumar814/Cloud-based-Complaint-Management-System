@@ -1,27 +1,29 @@
 {
   "name": "complaint-management-service",
   "version": "1.0.0",
-  "description": "Production-ready Express microservice for complaint management with DynamoDB",
+  "description": "Cloud-based complaint management system — Node.js Express backend",
   "type": "module",
-  "main": "server.js",
+  "main": "src/server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js"
   },
   "engines": {
     "node": ">=18.0.0"
   },
   "keywords": [
     "express",
-    "dynamodb",
     "complaints",
-    "microservice"
+    "cloud"
   ],
   "license": "MIT",
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.812.0",
-    "@aws-sdk/lib-dynamodb": "^3.812.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
   }
 }

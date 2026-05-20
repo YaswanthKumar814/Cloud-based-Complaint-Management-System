@@ -1,93 +1,57 @@
-# Complaint Management Microservice
+# Complaint Management System — Backend
 
-Production-ready Node.js Express API backed by Amazon DynamoDB (AWS SDK v3).
+Phase 2 foundation: Node.js + Express with ES modules.
 
-## Project structure
+## Structure
 
 ```
-├── config/          # Environment and DynamoDB client
-├── controllers/     # Request/response handling
-├── middleware/      # Global error handling
-├── routes/          # Express route definitions
-├── services/        # DynamoDB business logic
-├── utils/           # Shared helpers
-├── app.js           # Express application
-└── server.js        # HTTP server entry point
+src/
+  config/       # Environment configuration
+  controllers/  # Route handlers
+  middleware/   # Error handling, etc.
+  routes/       # Express routers
+  services/     # Business logic (Phase 3+)
+  app.js        # Express application
+  server.js     # Entry point
 ```
 
-## Setup
+## Run
 
-1. Copy environment variables:
+```bash
+npm install
+npm run dev
+```
 
-   ```bash
-   cp .env.example .env
-   ```
+Server listens on `process.env.PORT` (default **5000** from `.env`).
 
-2. Install dependencies:
+## Verify Phase 2
 
-   ```bash
-   npm install
-   ```
+```bash
+curl http://localhost:5000/
+```
 
-3. Create the DynamoDB table (AWS CLI):
-
-   ```bash
-   aws dynamodb create-table --cli-input-json file://scripts/create-table.json
-   ```
-
-   For DynamoDB Local, set `DYNAMODB_ENDPOINT=http://localhost:8000` in `.env`.
-
-4. Start the server:
-
-   ```bash
-   npm run dev
-   ```
-
-## API
-
-| Method | Path           | Description              |
-|--------|----------------|--------------------------|
-| POST   | `/complaint`   | Create a complaint       |
-| GET    | `/complaints`  | List complaints          |
-| PUT    | `/status`      | Update complaint status  |
-| GET    | `/health`      | Health check             |
-
-### POST /complaint
+Expected:
 
 ```json
-{
-  "title": "Network outage",
-  "description": "Cannot access internal portal since 9 AM",
-  "category": "IT",
-  "reporterEmail": "user@example.com"
-}
+{ "message": "Complaint Service Running" }
 ```
 
-### GET /complaints
+## Docker
 
-Query parameters:
+Build:
 
-- `status` — filter by `open`, `in_progress`, `resolved`, or `closed`
-- `limit` — max items (default 50, max 100)
-
-### PUT /status
-
-```json
-{
-  "complaintId": "uuid-from-create-response",
-  "status": "in_progress"
-}
+```bash
+docker build -t complaint-service:latest .
 ```
 
-## Error responses
+Run:
 
-All errors return a consistent JSON shape:
+```bash
+docker run --rm -p 5000:5000 --name complaint-service complaint-service:latest
+```
 
-```json
-{
-  "success": false,
-  "error": {
-    "message": "Human-readable message"
-  }
-}
+Verify:
+
+```bash
+curl http://localhost:5000/
 ```
