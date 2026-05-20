@@ -4,6 +4,7 @@ import { docClient } from '../config/dynamodb.js';
 import { env } from '../config/env.js';
 import { HttpError } from '../utils/HttpError.js';
 import { mapAwsError } from '../utils/mapAwsError.js';
+import { analyzeComplaintText } from './aiAnalysisService.js';
 
 const TABLE = env.dynamodb.tableName;
 
@@ -13,6 +14,10 @@ const TABLE = env.dynamodb.tableName;
  */
 export async function createComplaint({ title, description, category, fileUrl, fileKey }) {
   const now = new Date().toISOString();
+
+  // Amazon Comprehend + simple keyword rules (low-cost, no custom ML)
+  const ai = await analyzeComplaintText(title, description);
+
   const item = {
     complaintId: uuidv4(),
     title,
@@ -20,6 +25,10 @@ export async function createComplaint({ title, description, category, fileUrl, f
     category: category ?? null,
     status: 'Pending',
     createdAt: now,
+    sentiment: ai.sentiment,
+    aiCategory: ai.aiCategory,
+    priority: ai.priority,
+    keyPhrases: ai.keyPhrases,
   };
 
   if (fileUrl && fileKey) {

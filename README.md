@@ -31,6 +31,18 @@ Complaint REST API: **`/api/complaints`** — [docs/COMPLAINT_API.md](docs/COMPL
 
 S3 pre-signed uploads: **`POST /api/uploads/presigned-url`** — [docs/S3_UPLOAD.md](docs/S3_UPLOAD.md).
 
+## Frontend (React + Cognito)
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open **http://localhost:5173** — setup & testing: [docs/COGNITO_FRONTEND.md](docs/COGNITO_FRONTEND.md).
+
+Complaint AI (Amazon Comprehend): [docs/COMPREHEND_AI.md](docs/COMPREHEND_AI.md).
+
 ## Verify Phase 2
 
 ```bash
