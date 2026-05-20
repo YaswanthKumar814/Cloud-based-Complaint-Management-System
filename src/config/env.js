@@ -13,4 +13,8 @@ export const env = {
     /** Table name must match your AWS table (partition key: complaintId). */
     tableName: process.env.DYNAMODB_TABLE || 'Complaints',
   },
+  s3: {
+    /** S3 bucket for complaint attachments (pre-signed uploads). */
+    bucketName: process.env.S3_BUCKET_NAME || '',
+  },
 };

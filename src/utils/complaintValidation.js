@@ -1,24 +1,9 @@
 import { HttpError } from './HttpError.js';
+import { requireString } from './stringValidation.js';
+import { parseOptionalFileFields } from './uploadValidation.js';
 
 /** Allowed status values when updating a complaint */
 export const ALLOWED_STATUSES = ['Pending', 'In Progress', 'Resolved', 'Rejected'];
-
-export function requireString(value, fieldName, { optional = false } = {}) {
-  if (value === undefined || value === null || value === '') {
-    if (optional) {
-      return undefined;
-    }
-    throw new HttpError(400, `${fieldName} is required`);
-  }
-  if (typeof value !== 'string') {
-    throw new HttpError(400, `${fieldName} must be a string`);
-  }
-  const trimmed = value.trim();
-  if (!trimmed) {
-    throw new HttpError(400, `${fieldName} cannot be empty`);
-  }
-  return trimmed;
-}
 
 export function parseCreateComplaintBody(body) {
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
@@ -33,10 +18,14 @@ export function parseCreateComplaintBody(body) {
       'Request body is empty. Send JSON with "title" and "description" (and optional "category").',
     );
   }
+  const { fileUrl, fileKey } = parseOptionalFileFields(body);
+
   return {
     title: requireString(body.title, 'title'),
     description: requireString(body.description, 'description'),
     category: requireString(body.category, 'category', { optional: true }),
+    fileUrl,
+    fileKey,
   };
 }
 

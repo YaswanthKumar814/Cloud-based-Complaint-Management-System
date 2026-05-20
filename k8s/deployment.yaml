@@ -33,6 +33,8 @@ spec:
               value: "ap-south-1"
             - name: DYNAMODB_TABLE
               value: "Complaints"
+            - name: S3_BUCKET_NAME
+              value: "complaint-system-files-yaswanth"
           readinessProbe:
             httpGet:
               path: /

@@ -2,8 +2,14 @@ import * as complaintService from '../services/complaintService.js';
 import { parseCreateComplaintBody, parseStatusUpdateBody } from '../utils/complaintValidation.js';
 
 export async function postComplaint(req, res) {
-  const { title, description, category } = parseCreateComplaintBody(req.body);
-  const complaint = await complaintService.createComplaint({ title, description, category });
+  const { title, description, category, fileUrl, fileKey } = parseCreateComplaintBody(req.body);
+  const complaint = await complaintService.createComplaint({
+    title,
+    description,
+    category,
+    fileUrl,
+    fileKey,
+  });
   res.status(201).json({ success: true, data: complaint });
 }
 

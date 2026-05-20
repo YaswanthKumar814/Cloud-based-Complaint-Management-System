@@ -5,7 +5,8 @@ FROM node:22-alpine
 ENV NODE_ENV=production \
     PORT=5000 \
     AWS_REGION=ap-south-1 \
-    DYNAMODB_TABLE=Complaints
+    DYNAMODB_TABLE=Complaints \
+    S3_BUCKET_NAME=complaint-system-files-yaswanth
 
 WORKDIR /usr/src/app
 

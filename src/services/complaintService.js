@@ -3,41 +3,15 @@ import { v4 as uuidv4 } from 'uuid';
 import { docClient } from '../config/dynamodb.js';
 import { env } from '../config/env.js';
 import { HttpError } from '../utils/HttpError.js';
+import { mapAwsError } from '../utils/mapAwsError.js';
 
 const TABLE = env.dynamodb.tableName;
-
-function mapAwsError(error) {
-  const msg = error?.message ?? '';
-
-  if (
-    error?.name === 'CredentialsProviderError' ||
-    msg.includes('Could not load credentials')
-  ) {
-    throw new HttpError(
-      401,
-      'AWS credentials are missing. For Docker: pass AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY, or mount ~/.aws. For local dev: run npm run dev with credentials configured.',
-    );
-  }
-  if (error?.name === 'ResourceNotFoundException') {
-    throw new HttpError(
-      503,
-      `DynamoDB table "${TABLE}" was not found in this region. Check DYNAMODB_TABLE and AWS_REGION.`,
-    );
-  }
-  if (error?.name === 'UnrecognizedClientException' || error?.name === 'InvalidSignatureException') {
-    throw new HttpError(401, 'AWS credentials are invalid or missing. Configure AWS CLI or environment variables.');
-  }
-  if (error?.name === 'AccessDeniedException') {
-    throw new HttpError(403, 'AWS user is not allowed to access this DynamoDB table.');
-  }
-  throw error;
-}
 
 /**
  * Create a new complaint item.
  * Expects DynamoDB partition key: complaintId (String).
  */
-export async function createComplaint({ title, description, category }) {
+export async function createComplaint({ title, description, category, fileUrl, fileKey }) {
   const now = new Date().toISOString();
   const item = {
     complaintId: uuidv4(),
@@ -48,6 +22,11 @@ export async function createComplaint({ title, description, category }) {
     createdAt: now,
   };
 
+  if (fileUrl && fileKey) {
+    item.fileUrl = fileUrl;
+    item.fileKey = fileKey;
+  }
+
   try {
     await docClient.send(
       new PutCommand({
@@ -57,7 +36,7 @@ export async function createComplaint({ title, description, category }) {
       }),
     );
   } catch (error) {
-    mapAwsError(error);
+    mapAwsError(error, `DynamoDB table "${TABLE}"`);
   }
 
   return item;
@@ -77,7 +56,7 @@ export async function listComplaints() {
     items.sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
     return items;
   } catch (error) {
-    mapAwsError(error);
+    mapAwsError(error, `DynamoDB table "${TABLE}"`);
   }
 }
 
@@ -97,7 +76,7 @@ export async function getComplaintById(complaintId) {
     if (error instanceof HttpError) {
       throw error;
     }
-    mapAwsError(error);
+    mapAwsError(error, `DynamoDB table "${TABLE}"`);
   }
 }
 
@@ -126,6 +105,6 @@ export async function updateComplaintStatus(complaintId, status) {
     if (error?.name === 'ConditionalCheckFailedException') {
       throw new HttpError(404, `No complaint found with id "${complaintId}"`);
     }
-    mapAwsError(error);
+    mapAwsError(error, `DynamoDB table "${TABLE}"`);
   }
 }

@@ -27,7 +27,9 @@ Server listens on `process.env.PORT` (default **5000** from `.env`).
 
 Set `AWS_REGION` and `DYNAMODB_TABLE` in `.env` (see `.env.example`). AWS credentials use the [default credential chain](https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/setting-credentials-node.html) (e.g. `aws configure`).
 
-Complaint REST API: **`/api/complaints`** — full testing guide: [docs/COMPLAINT_API.md](docs/COMPLAINT_API.md).
+Complaint REST API: **`/api/complaints`** — [docs/COMPLAINT_API.md](docs/COMPLAINT_API.md).
+
+S3 pre-signed uploads: **`POST /api/uploads/presigned-url`** — [docs/S3_UPLOAD.md](docs/S3_UPLOAD.md).
 
 ## Verify Phase 2
 

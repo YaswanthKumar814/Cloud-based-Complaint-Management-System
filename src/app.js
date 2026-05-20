@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import { env } from './config/env.js';
 import indexRoutes from './routes/index.js';
 import complaintRoutes from './routes/complaintRoutes.js';
+import uploadRoutes from './routes/uploadRoutes.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 
 const app = express();
@@ -15,6 +16,7 @@ app.use(express.json());
 
 app.use(indexRoutes);
 app.use('/api', complaintRoutes);
+app.use('/api', uploadRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
