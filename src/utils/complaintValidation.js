@@ -24,6 +24,7 @@ export function parseCreateComplaintBody(body) {
     title: requireString(body.title, 'title'),
     description: requireString(body.description, 'description'),
     category: requireString(body.category, 'category', { optional: true }),
+    userEmail: requireString(body.userEmail, 'userEmail'),
     fileUrl,
     fileKey,
   };

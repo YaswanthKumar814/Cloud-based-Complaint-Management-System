@@ -4,7 +4,6 @@ import { sortByPriority } from '../utils/format.js';
 import UserHeader from '../components/UserHeader.jsx';
 import ComplaintFilters from '../components/ComplaintFilters.jsx';
 import ComplaintCard from '../components/ComplaintCard.jsx';
-import { getApiBaseUrl } from '../api/client.js';
 
 /**
  * Admin dashboard: lists complaints from Express API, filters, status updates.
@@ -69,11 +68,7 @@ export default function DashboardPage() {
 
   return (
     <div className="dashboard">
-      <UserHeader />
-
-      <p className="api-hint">
-        API: <code>{getApiBaseUrl()}</code> — ensure backend is running (<code>npm run dev</code> in project root).
-      </p>
+      <UserHeader title="Complaint Admin Dashboard" />
 
       <ComplaintFilters
         search={search}
@@ -106,7 +101,7 @@ export default function DashboardPage() {
 
       {!loading && !error && filtered.length === 0 && (
         <div className="state-box">
-          <p>No complaints found. Create one via Postman: POST /api/complaints</p>
+          <p>No complaints found.</p>
         </div>
       )}
 

@@ -2,19 +2,26 @@ import * as complaintService from '../services/complaintService.js';
 import { parseCreateComplaintBody, parseStatusUpdateBody } from '../utils/complaintValidation.js';
 
 export async function postComplaint(req, res) {
-  const { title, description, category, fileUrl, fileKey } = parseCreateComplaintBody(req.body);
+  const { title, description, category, userEmail, fileUrl, fileKey } =
+    parseCreateComplaintBody(req.body);
   const complaint = await complaintService.createComplaint({
     title,
     description,
     category,
+    userEmail,
     fileUrl,
     fileKey,
   });
   res.status(201).json({ success: true, data: complaint });
 }
 
-export async function getComplaints(_req, res) {
-  const complaints = await complaintService.listComplaints();
+export async function getComplaints(req, res) {
+  const userEmail =
+    typeof req.query.userEmail === 'string' && req.query.userEmail.trim()
+      ? req.query.userEmail.trim()
+      : undefined;
+
+  const complaints = await complaintService.listComplaints({ userEmail });
   res.status(200).json({ success: true, count: complaints.length, data: complaints });
 }
 

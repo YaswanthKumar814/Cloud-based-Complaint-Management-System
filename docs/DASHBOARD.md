@@ -16,7 +16,7 @@ cd frontend
 npm run dev
 ```
 
-Open **http://localhost:5173** → Login with Cognito → Dashboard.
+Open **http://localhost:5173** → Login with Cognito → **Admin** or **User** dashboard (by email). See [ROLES.md](ROLES.md).
 
 ---
 

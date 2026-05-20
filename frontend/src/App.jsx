@@ -1,6 +1,8 @@
 import { useAuth } from 'react-oidc-context';
 import LoginPage from './pages/LoginPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
+import UserDashboardPage from './pages/UserDashboardPage.jsx';
+import { getUserEmail, isAdminUser } from './auth/roles.js';
 
 /**
  * Simple app shell — no router library.
@@ -34,9 +36,14 @@ export default function App() {
     );
   }
 
+  const email = getUserEmail(auth);
+  const showAdmin = auth.isAuthenticated && isAdminUser(email);
+
   return (
     <div className={`app ${auth.isAuthenticated ? 'app-wide' : ''}`}>
-      {auth.isAuthenticated ? <DashboardPage /> : <LoginPage />}
+      {!auth.isAuthenticated && <LoginPage />}
+      {showAdmin && <DashboardPage />}
+      {auth.isAuthenticated && !showAdmin && <UserDashboardPage />}
     </div>
   );
 }

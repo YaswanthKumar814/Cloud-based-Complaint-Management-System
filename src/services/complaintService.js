@@ -16,7 +16,14 @@ const TABLE = env.dynamodb.tableName;
  * Create a new complaint item.
  * Expects DynamoDB partition key: complaintId (String).
  */
-export async function createComplaint({ title, description, category, fileUrl, fileKey }) {
+export async function createComplaint({
+  title,
+  description,
+  category,
+  userEmail,
+  fileUrl,
+  fileKey,
+}) {
   const now = new Date().toISOString();
 
   // Amazon Comprehend + simple keyword rules (low-cost, no custom ML)
@@ -27,6 +34,7 @@ export async function createComplaint({ title, description, category, fileUrl, f
     title,
     description,
     category: category ?? null,
+    userEmail,
     status: 'Pending',
     createdAt: now,
     sentiment: ai.sentiment,
@@ -63,13 +71,16 @@ export async function createComplaint({ title, description, category, fileUrl, f
 /**
  * List all complaints (Scan). Fine for learning; production apps often use Query + indexes.
  */
-export async function listComplaints() {
+export async function listComplaints({ userEmail } = {}) {
   try {
-    const result = await docClient.send(
-      new ScanCommand({
-        TableName: TABLE,
-      }),
-    );
+    const params = { TableName: TABLE };
+
+    if (userEmail) {
+      params.FilterExpression = 'userEmail = :userEmail';
+      params.ExpressionAttributeValues = { ':userEmail': userEmail };
+    }
+
+    const result = await docClient.send(new ScanCommand(params));
     const items = result.Items ?? [];
     items.sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
     return items;

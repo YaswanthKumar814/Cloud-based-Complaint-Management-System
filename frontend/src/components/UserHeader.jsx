@@ -1,16 +1,27 @@
 import { useAuth } from 'react-oidc-context';
 import LogoutButton from './LogoutButton.jsx';
+import { getUserEmail, isAdminUser } from '../auth/roles.js';
 
-/** Top bar: logged-in email + logout */
-export default function UserHeader() {
+/** Top bar: title, email, role badge, logout */
+export default function UserHeader({ title, subtitle }) {
   const auth = useAuth();
-  const email = auth.user?.profile?.email ?? 'Admin';
+  const email = getUserEmail(auth);
+  const admin = isAdminUser(email);
 
   return (
     <header className="user-header">
       <div>
-        <h1 className="dashboard-title">Complaint Admin Dashboard</h1>
-        <p className="dashboard-subtitle">Signed in as <strong>{email}</strong></p>
+        <h1 className="dashboard-title">{title}</h1>
+        <p className="dashboard-subtitle">
+          {subtitle ?? (
+            <>
+              Signed in as <strong>{email}</strong>
+            </>
+          )}
+        </p>
+        <span className={`role-badge ${admin ? 'role-admin' : 'role-user'}`}>
+          {admin ? 'Admin' : 'User'}
+        </span>
       </div>
       <LogoutButton />
     </header>
