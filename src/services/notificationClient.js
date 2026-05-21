@@ -1,9 +1,7 @@
 import { env } from '../config/env.js';
+import { captureAsync } from '../config/xray.js';
+import { logInfo, logWarn, logError } from '../utils/logger.js';
 
-/**
- * HTTP client — calls the Notification Service microservice.
- * Best-effort: never throws; logs errors only.
- */
 function getBaseUrl() {
   return (env.notification.serviceUrl || '').replace(/\/$/, '');
 }
@@ -11,31 +9,31 @@ function getBaseUrl() {
 async function post(path, body) {
   const base = getBaseUrl();
   if (!base) {
-    console.warn(
-      '[notification] Skipped — set NOTIFICATION_SERVICE_URL (e.g. http://localhost:5001)',
-    );
+    logWarn('Notification call skipped — NOTIFICATION_SERVICE_URL not set');
     return;
   }
 
   const url = `${base}${path}`;
 
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
+  await captureAsync('notification-service', async () => {
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
 
-    if (!res.ok) {
-      const text = await res.text().catch(() => '');
-      console.error('[notification] HTTP', res.status, text.slice(0, 200));
-      return;
+      if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        logError('Notification HTTP error', { status: res.status, path, detail: text.slice(0, 200) });
+        return;
+      }
+
+      logInfo('Notification request sent', { path });
+    } catch (error) {
+      logError('Notification request failed', { path, error: error.message });
     }
-
-    console.log('[notification] Sent via notification-service:', path);
-  } catch (error) {
-    console.error('[notification] Request failed:', error.message);
-  }
+  });
 }
 
 export async function notifyComplaintCreated(complaint) {

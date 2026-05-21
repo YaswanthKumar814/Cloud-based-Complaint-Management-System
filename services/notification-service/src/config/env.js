@@ -15,4 +15,6 @@ export const env = {
   sns: {
     topicArn: process.env.SNS_TOPIC_ARN || '',
   },
+  /** Set at runtime: 'secrets-manager' or 'env' */
+  secretsSource: 'env',
 };

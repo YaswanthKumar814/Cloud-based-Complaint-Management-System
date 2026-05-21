@@ -3,6 +3,7 @@ import { PublishCommand } from '@aws-sdk/client-sns';
 import { sesClient } from '../config/ses.js';
 import { snsClient } from '../config/sns.js';
 import { env } from '../config/env.js';
+import { logInfo, logWarn } from '../utils/logger.js';
 
 function isEmailConfigured() {
   return Boolean(env.ses.fromEmail && env.ses.adminEmail);
@@ -28,9 +29,7 @@ Description: ${complaint.description}
 
 async function sendEmail(subject, bodyText) {
   if (!isEmailConfigured()) {
-    console.warn(
-      '[notification] Email skipped — set SES_FROM_EMAIL and ADMIN_EMAIL',
-    );
+    logWarn('Email skipped — configure SES_FROM_EMAIL and ADMIN_EMAIL');
     return false;
   }
 
@@ -49,10 +48,10 @@ async function sendEmail(subject, bodyText) {
         },
       }),
     );
-    console.log('[notification] Email sent:', subject);
+    logInfo('Email sent via SES', { subject });
     return true;
   } catch (error) {
-    console.error('[notification] SES email failed:', error.name, error.message);
+    logWarn('SES email failed', { error: error.name, message: error.message });
     return false;
   }
 }
@@ -70,10 +69,10 @@ async function publishSns(message) {
         Subject: 'Complaint Alert',
       }),
     );
-    console.log('[notification] SNS message published');
+    logInfo('SNS message published');
     return true;
   } catch (error) {
-    console.error('[notification] SNS publish failed:', error.name, error.message);
+    logWarn('SNS publish failed', { error: error.name, message: error.message });
     return false;
   }
 }

@@ -1,0 +1,47 @@
+# Optional: AWS X-Ray daemon for EKS (apply once per cluster)
+# Usage: kubectl apply -f k8s/eks/xray-daemon.yaml
+# Complaint-service uses AWS_XRAY_DAEMON_ADDRESS=xray-service.default:2000
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: xray-daemon
+  labels:
+    app: xray-daemon
+spec:
+  selector:
+    matchLabels:
+      app: xray-daemon
+  template:
+    metadata:
+      labels:
+        app: xray-daemon
+    spec:
+      containers:
+        - name: xray-daemon
+          image: amazon/aws-xray-daemon:latest
+          ports:
+            - containerPort: 2000
+              protocol: UDP
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: xray-service
+  labels:
+    app: xray-daemon
+spec:
+  selector:
+    app: xray-daemon
+  ports:
+    - name: udp
+      port: 2000
+      protocol: UDP
+      targetPort: 2000

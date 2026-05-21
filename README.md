@@ -47,7 +47,8 @@ Complaint AI (Amazon Comprehend): [docs/COMPREHEND_AI.md](docs/COMPREHEND_AI.md)
 **3 containers (frontend + backends):** [docs/THREE_CONTAINERS.md](docs/THREE_CONTAINERS.md)  
 **Which `.env` for each terminal:** [docs/LOCAL_RUN.md](docs/LOCAL_RUN.md)  
 **Microservices architecture:** [docs/MICROSERVICES.md](docs/MICROSERVICES.md)  
-**Email/SNS (AWS Console):** [docs/NOTIFICATIONS.md](docs/NOTIFICATIONS.md)
+**Email/SNS (AWS Console):** [docs/NOTIFICATIONS.md](docs/NOTIFICATIONS.md)  
+**Phase 16 (start here):** [docs/PHASE16_SIMPLE.md](docs/PHASE16_SIMPLE.md)
 
 ## Verify Phase 2
 

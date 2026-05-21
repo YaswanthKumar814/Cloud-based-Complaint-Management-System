@@ -9,6 +9,7 @@ import {
   notifyComplaintCreated,
   notifyStatusUpdated,
 } from './notificationClient.js';
+import { logInfo, logError } from '../utils/logger.js';
 
 const TABLE = env.dynamodb.tableName;
 
@@ -60,9 +61,15 @@ export async function createComplaint({
     mapAwsError(error, `DynamoDB table "${TABLE}"`);
   }
 
-  // Notifications are best-effort — never block the API response
+  logInfo('Complaint created', {
+    complaintId: item.complaintId,
+    aiCategory: item.aiCategory,
+    priority: item.priority,
+    sentiment: item.sentiment,
+  });
+
   notifyComplaintCreated(item).catch((err) => {
-    console.error('[notification] Unexpected error on create:', err.message);
+    logError('Notification error on create', { error: err.message });
   });
 
   return item;
@@ -131,8 +138,10 @@ export async function updateComplaintStatus(complaintId, status) {
     );
     const updated = result.Attributes;
 
+    logInfo('Complaint status updated', { complaintId, status });
+
     notifyStatusUpdated(updated).catch((err) => {
-      console.error('[notification] Unexpected error on status update:', err.message);
+      logError('Notification error on status update', { error: err.message });
     });
 
     return updated;

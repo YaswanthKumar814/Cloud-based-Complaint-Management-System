@@ -39,6 +39,14 @@ spec:
               value: "yaswanthkumarpulapa@gmail.com"
             - name: ADMIN_EMAIL
               value: "yaswanthkumarpulapa@gmail.com"
+            - name: NOTIFICATION_SECRET_NAME
+              value: "complaint-management/notification"
+            - name: USE_SECRETS_MANAGER
+              value: "false"
+            - name: SERVICE_NAME
+              value: "notification-service"
+            - name: STRUCTURED_LOGS
+              value: "true"
           readinessProbe:
             httpGet:
               path: /

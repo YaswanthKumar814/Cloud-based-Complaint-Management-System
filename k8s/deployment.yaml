@@ -41,6 +41,10 @@ spec:
               value: "complaint-system-files-yaswanth"
             - name: NOTIFICATION_SERVICE_URL
               value: "http://notification-service:5001"
+            - name: SERVICE_NAME
+              value: "complaint-service"
+            - name: STRUCTURED_LOGS
+              value: "true"
           readinessProbe:
             httpGet:
               path: /
