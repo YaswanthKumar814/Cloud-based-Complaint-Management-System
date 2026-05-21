@@ -1,0 +1,25 @@
+# Small temporary EKS cluster for evaluation (delete after screenshots)
+# Create:  eksctl create cluster -f eks/cluster.yaml
+# Delete:  eksctl delete cluster -f eks/cluster.yaml
+
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: complaint-eks
+  region: ap-south-1
+  version: "1.32"
+
+managedNodeGroups:
+  - name: workers
+    instanceType: t3.small
+    desiredCapacity: 1
+    minSize: 1
+    maxSize: 1
+    volumeSize: 20
+    amiFamily: AmazonLinux2
+    iam:
+      withAddonPolicies:
+        imageBuilder: true
+        ebs: false
+        cloudWatch: false

@@ -107,7 +107,22 @@ Quick push (after creating repo in console + `scripts/ecr.env`):
 .\scripts\push-to-ecr.ps1
 ```
 
-## Kubernetes (Minikube)
+## Amazon EKS (temporary evaluation cluster)
+
+Lightweight AWS-managed Kubernetes — **delete after screenshots** to save cost.
+
+Guide: **[docs/EKS.md](docs/EKS.md)**
+
+```powershell
+eksctl create cluster -f eks/cluster.yaml
+aws eks update-kubeconfig --region ap-south-1 --name complaint-eks
+.\scripts\apply-eks.ps1
+kubectl get pods -l app=complaint-service
+# When finished:
+eksctl delete cluster -f eks/cluster.yaml
+```
+
+## Kubernetes (Minikube — local)
 
 ```bash
 minikube start

@@ -1,0 +1,68 @@
+# EKS deployment — pulls image from Amazon ECR (not local Minikube image)
+# BEFORE APPLY: replace REPLACE_WITH_ECR_IMAGE with your full ECR URI, e.g.:
+#   167217327938.dkr.ecr.ap-south-1.amazonaws.com/complaint-service:latest
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: complaint-service
+  labels:
+    app: complaint-service
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: complaint-service
+  template:
+    metadata:
+      labels:
+        app: complaint-service
+        tier: backend
+    spec:
+      containers:
+        - name: complaint-service
+          image: REPLACE_WITH_ECR_IMAGE
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 5000
+              protocol: TCP
+          env:
+            - name: PORT
+              value: "5000"
+            - name: NODE_ENV
+              value: "production"
+            - name: AWS_REGION
+              value: "ap-south-1"
+            - name: DYNAMODB_TABLE
+              value: "Complaints"
+            - name: S3_BUCKET_NAME
+              value: "complaint-system-files-yaswanth"
+            - name: SES_FROM_EMAIL
+              value: "yaswanthkumarpulapa@gmail.com"
+            - name: ADMIN_EMAIL
+              value: "yaswanthkumarpulapa@gmail.com"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi

@@ -173,6 +173,8 @@ Your code → docker build → complaint-service:latest (local)
 
 Local **Minikube** still uses `minikube image load` — separate from ECR.
 
+**Next step:** deploy to EKS using [EKS.md](EKS.md).
+
 ---
 
 ## Quick reference

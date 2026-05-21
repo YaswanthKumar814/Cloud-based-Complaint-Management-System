@@ -1,7 +1,5 @@
-# Push complaint-service Docker image to Amazon ECR
-# Usage (from project root):
-#   1. Copy scripts/ecr.env.example to scripts/ecr.env and edit AWS_ACCOUNT_ID
-#   2. .\scripts\push-to-ecr.ps1
+# Push complaint-service Docker image to Amazon ECR (Windows PowerShell 5.1+)
+# Usage: copy scripts/ecr.env.example to scripts/ecr.env, then .\scripts\push-to-ecr.ps1
 
 $ErrorActionPreference = "Stop"
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
@@ -16,10 +14,14 @@ if (Test-Path $EnvFile) {
     }
 }
 
-$Region = $env:AWS_REGION ?? "ap-south-1"
+if (-not $env:AWS_REGION) { $env:AWS_REGION = "ap-south-1" }
+if (-not $env:ECR_REPO) { $env:ECR_REPO = "complaint-service" }
+if (-not $env:LOCAL_IMAGE) { $env:LOCAL_IMAGE = "complaint-service:latest" }
+
+$Region = $env:AWS_REGION
 $AccountId = $env:AWS_ACCOUNT_ID
-$Repo = $env:ECR_REPO ?? "complaint-service"
-$LocalImage = $env:LOCAL_IMAGE ?? "complaint-service:latest"
+$Repo = $env:ECR_REPO
+$LocalImage = $env:LOCAL_IMAGE
 
 if (-not $AccountId -or $AccountId -eq "123456789012") {
     Write-Host "ERROR: Set AWS_ACCOUNT_ID in scripts/ecr.env (copy from scripts/ecr.env.example)" -ForegroundColor Red
