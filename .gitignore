@@ -5,6 +5,7 @@ node_modules/
 .DS_Store
 coverage/
 dist/
+scripts/ecr.env
 frontend/node_modules/
 frontend/dist/
 frontend/.env

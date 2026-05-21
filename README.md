@@ -95,6 +95,18 @@ Verify:
 curl http://localhost:5000/
 ```
 
+## Amazon ECR (store Docker image in AWS)
+
+Push `complaint-service:latest` to a private AWS registry (for future EKS; optional for local dev).
+
+Full guide: **[docs/ECR.md](docs/ECR.md)**
+
+Quick push (after creating repo in console + `scripts/ecr.env`):
+
+```powershell
+.\scripts\push-to-ecr.ps1
+```
+
 ## Kubernetes (Minikube)
 
 ```bash
