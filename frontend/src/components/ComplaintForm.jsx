@@ -3,6 +3,7 @@ import { useAuth } from 'react-oidc-context';
 import { createComplaint } from '../api/complaintsApi.js';
 import { getPresignedUploadUrl, uploadFileToS3 } from '../api/uploadApi.js';
 import { getUserEmail } from '../auth/roles.js';
+import { resolveContentType } from '../utils/fileType.js';
 
 const CATEGORIES = ['Hostel', 'Internet', 'Electrical', 'Cleanliness', 'Infrastructure', 'Other'];
 
@@ -18,6 +19,7 @@ export default function ComplaintForm({ onCreated }) {
   const [category, setCategory] = useState('Hostel');
   const [file, setFile] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState('');
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
@@ -26,17 +28,24 @@ export default function ComplaintForm({ onCreated }) {
     setSubmitting(true);
     setError(null);
     setSuccess(null);
+    setUploadStatus('');
 
     try {
       let fileUrl;
       let fileKey;
 
       if (file) {
-        const contentType = file.type || 'application/octet-stream';
+        const contentType = resolveContentType(file);
+
+        setUploadStatus('Getting upload link from server…');
         const presign = await getPresignedUploadUrl(file.name, contentType);
-        await uploadFileToS3(presign.uploadUrl, file, contentType);
+
+        setUploadStatus('Uploading file to S3…');
+        await uploadFileToS3(presign.uploadUrl, file, presign.contentType || contentType);
+
         fileUrl = presign.fileUrl;
         fileKey = presign.fileKey;
+        setUploadStatus('File uploaded. Saving complaint…');
       }
 
       await createComplaint({
@@ -52,9 +61,11 @@ export default function ComplaintForm({ onCreated }) {
       setCategory('Hostel');
       setFile(null);
       setSuccess('Complaint submitted successfully.');
+      setUploadStatus('');
       onCreated?.();
     } catch (err) {
       setError(err.message);
+      setUploadStatus('');
     } finally {
       setSubmitting(false);
     }
@@ -106,11 +117,12 @@ export default function ComplaintForm({ onCreated }) {
           />
         </label>
 
+        {uploadStatus && <p className="upload-status">{uploadStatus}</p>}
         {error && <p className="error-inline">{error}</p>}
         {success && <p className="success-inline">{success}</p>}
 
         <button type="submit" disabled={submitting}>
-          {submitting ? 'Submitting…' : 'Submit complaint'}
+          {submitting ? 'Please wait…' : 'Submit complaint'}
         </button>
       </form>
     </section>

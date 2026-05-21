@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Badge from './Badge.jsx';
+import AttachmentLink from './AttachmentLink.jsx';
 import { formatDate } from '../utils/format.js';
 import { updateComplaintStatus } from '../api/complaintsApi.js';
 
@@ -73,14 +74,9 @@ export default function ComplaintCard({ complaint, onUpdated }) {
         </p>
       )}
 
-      {complaint.fileUrl && (
+      {complaint.fileKey && (
         <p>
-          <a href={complaint.fileUrl} target="_blank" rel="noreferrer" className="attachment-link">
-            View attachment
-          </a>
-          {complaint.fileKey && (
-            <span className="file-key"> ({complaint.fileKey})</span>
-          )}
+          <AttachmentLink fileKey={complaint.fileKey} />
         </p>
       )}
 

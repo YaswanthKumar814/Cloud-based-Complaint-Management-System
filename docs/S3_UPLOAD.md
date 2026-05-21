@@ -23,7 +23,7 @@ Files live in a **bucket** (folder in the cloud). Each file has a **key** (path)
 Your AWS user/role needs at least:
 
 - `s3:PutObject` on `arn:aws:s3:::YOUR_BUCKET/complaints/*`
-- `s3:PutObject` for presigning (same)
+- `s3:GetObject` on `arn:aws:s3:::YOUR_BUCKET/complaints/*` (view attachments in dashboard)
 
 DynamoDB permissions unchanged.
 
@@ -108,12 +108,33 @@ Invoke-RestMethod -Uri http://localhost:5000/api/complaints -Method POST -Conten
 
 ---
 
+## View attachment shows "Access Denied" XML
+
+Your bucket is **private** (correct for security). The stored `fileUrl` cannot be opened directly in the browser.
+
+The dashboard now calls **`GET /api/uploads/download-url?fileKey=...`** to get a temporary view link (presigned GET, 5 minutes).
+
+Add IAM permission: **`s3:GetObject`** on `complaints/*` (see IAM section above).
+
+---
+
+## Fix browser "Failed to fetch" (React dashboard upload)
+
+Postman works without CORS. **Browsers** need CORS on the S3 bucket.
+
+1. AWS Console → **ap-south-1** → **S3** → bucket **`complaint-system-files-yaswanth`**
+2. **Permissions** → **Cross-origin resource sharing (CORS)** → **Edit**
+3. Paste JSON from `scripts/s3-cors.json` in the project (or copy from frontend error message docs)
+4. **Save changes** → hard refresh React app (Ctrl+F5) → try upload again
+
+---
+
 ## Common errors
 
 | Error | Fix |
 |-------|-----|
+| Browser `Failed to fetch` | Add S3 CORS for `http://localhost:5173` (see above) |
 | `S3_BUCKET_NAME is not set` | Add to `.env` |
 | `AccessDenied` on PUT to S3 | IAM `s3:PutObject` on bucket |
-| `403` on S3 PUT from Postman | `Content-Type` must match presign; URL expired (5 min) |
-| `Unsupported contentType` | Use png, jpeg, webp, or pdf |
-| CORS error in browser | Add CORS rule on bucket for your frontend origin |
+| `403` on S3 PUT | `Content-Type` must match presign; URL expired (5 min) |
+| `Unsupported contentType` | Use png, jpeg, webp, or pdf with matching extension |

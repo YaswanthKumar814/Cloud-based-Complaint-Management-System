@@ -1,4 +1,4 @@
-import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { randomUUID } from 'node:crypto';
 import { s3Client } from '../config/s3.js';
@@ -51,6 +51,36 @@ export async function createPresignedUploadUrl({ fileName, contentType }) {
       fileUrl: buildFileUrl(bucket, fileKey),
       expiresInSeconds: PRESIGN_EXPIRY_SECONDS,
       contentType,
+    };
+  } catch (error) {
+    mapAwsError(error, 'S3');
+  }
+}
+
+/**
+ * Temporary download link for private S3 objects (bucket is not public).
+ */
+export async function createPresignedDownloadUrl(fileKey) {
+  const bucket = getBucketName();
+
+  if (!fileKey || typeof fileKey !== 'string' || !fileKey.startsWith('complaints/')) {
+    throw new HttpError(400, 'Invalid fileKey. Must start with "complaints/"');
+  }
+
+  const command = new GetObjectCommand({
+    Bucket: bucket,
+    Key: fileKey,
+  });
+
+  try {
+    const downloadUrl = await getSignedUrl(s3Client, command, {
+      expiresIn: PRESIGN_EXPIRY_SECONDS,
+    });
+
+    return {
+      downloadUrl,
+      fileKey,
+      expiresInSeconds: PRESIGN_EXPIRY_SECONDS,
     };
   } catch (error) {
     mapAwsError(error, 'S3');

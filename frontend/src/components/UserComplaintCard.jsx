@@ -1,4 +1,5 @@
 import Badge from './Badge.jsx';
+import AttachmentLink from './AttachmentLink.jsx';
 import { formatDate } from '../utils/format.js';
 
 /** Read-only complaint card for normal users (no status update). */
@@ -36,11 +37,9 @@ export default function UserComplaintCard({ complaint }) {
         </p>
       )}
 
-      {complaint.fileUrl && (
+      {complaint.fileKey && (
         <p>
-          <a href={complaint.fileUrl} target="_blank" rel="noreferrer" className="attachment-link">
-            View attachment
-          </a>
+          <AttachmentLink fileKey={complaint.fileKey} />
         </p>
       )}
     </article>
