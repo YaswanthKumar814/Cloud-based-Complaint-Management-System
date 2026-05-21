@@ -1,7 +1,11 @@
-# Local two-service stack
-# 1. Copy services/notification-service/.env.example → services/notification-service/.env (SES emails)
-# 2. Ensure root .env has DynamoDB/S3 (no SES needed on complaint service)
-# 3. docker compose up --build
+# 3-container stack: frontend + complaint-service + notification-service
+#
+# AWS: containers mount your PC's %USERPROFILE%\.aws folder (same as "aws configure").
+# Run once on your PC:  aws configure
+#
+# Browser: http://localhost:5173  |  API: http://localhost:5000
+# Start: docker compose up --build
+# Stop:  docker compose down
 
 services:
   notification-service:
@@ -10,6 +14,11 @@ services:
       - "5001:5001"
     env_file:
       - ./services/notification-service/.env
+    environment:
+      HOME: /home/app
+      AWS_SDK_LOAD_CONFIG: "1"
+    volumes:
+      - ${USERPROFILE}/.aws:/home/app/.aws:ro
 
   complaint-service:
     build: .
@@ -19,5 +28,26 @@ services:
       - .env
     environment:
       NOTIFICATION_SERVICE_URL: http://notification-service:5001
+      HOME: /home/app
+      AWS_SDK_LOAD_CONFIG: "1"
+    volumes:
+      - ${USERPROFILE}/.aws:/home/app/.aws:ro
     depends_on:
       - notification-service
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:5000
+        VITE_APP_URL: http://localhost:5173
+        VITE_AWS_REGION: ap-south-1
+        VITE_COGNITO_USER_POOL_ID: ap-south-1_dGoMEWNI2
+        VITE_COGNITO_CLIENT_ID: 6aooj7ob7ika6847eetcq55cn3
+        VITE_COGNITO_DOMAIN: https://ap-south-1dgomewni2.auth.ap-south-1.amazoncognito.com
+        VITE_ADMIN_EMAIL: yaswanthkumarpulapa@gmail.com
+    ports:
+      - "5173:80"
+    depends_on:
+      - complaint-service

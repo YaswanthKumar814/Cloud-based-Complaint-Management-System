@@ -43,6 +43,27 @@ VITE_API_URL=http://localhost:5000
 
 ---
 
+## "AWS credentials are missing" (Docker Compose / frontend on :5173)
+
+This is **not** a CORS problem. The **complaint-service container** cannot reach DynamoDB.
+
+**Fix:**
+
+1. On your PC (once): `aws configure`
+2. Check: `dir $env:USERPROFILE\.aws` → file `credentials` must exist
+3. Restart containers:
+
+   ```powershell
+   docker compose down
+   docker compose up --build
+   ```
+
+4. Test API: `curl http://localhost:5000/api/complaints` — should return JSON, not credentials error
+
+**Alternative:** use **Path A** from [NEXT_STEPS.md](NEXT_STEPS.md) (`npm run dev` in root + notification) — uses your PC credentials automatically.
+
+---
+
 ## CORS errors
 
 Backend already uses `cors()`. If you still see CORS errors:

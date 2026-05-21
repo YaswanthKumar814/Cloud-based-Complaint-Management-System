@@ -2,9 +2,10 @@
 # Usage:
 #   .\scripts\push-to-ecr.ps1
 #   .\scripts\push-to-ecr.ps1 -Service notification
+#   .\scripts\push-to-ecr.ps1 -Service frontend
 
 param(
-    [ValidateSet('complaint', 'notification')]
+    [ValidateSet('complaint', 'notification', 'frontend')]
     [string]$Service = 'complaint'
 )
 
@@ -29,25 +30,30 @@ if (-not $env:AWS_ACCOUNT_ID) {
 
 $Region = $env:AWS_REGION
 $AccountId = $env:AWS_ACCOUNT_ID
+$Registry = "$AccountId.dkr.ecr.$Region.amazonaws.com"
 
 if ($Service -eq 'notification') {
     $Repo = $env:NOTIFICATION_ECR_REPO
     if (-not $Repo) { $Repo = "notification-service" }
     $LocalImage = "notification-service:latest"
     $BuildContext = Join-Path $ProjectRoot "services\notification-service"
+    Write-Host "Building: $LocalImage"
+    docker build -t $LocalImage $BuildContext
+} elseif ($Service -eq 'frontend') {
+    $Repo = $env:FRONTEND_ECR_REPO
+    if (-not $Repo) { $Repo = "complaint-frontend" }
+    $LocalImage = "complaint-frontend:latest"
+    & (Join-Path $PSScriptRoot "build-frontend-image.ps1") -Tag $LocalImage
 } else {
     $Repo = $env:ECR_REPO
     if (-not $Repo) { $Repo = "complaint-service" }
     $LocalImage = $env:LOCAL_IMAGE
     if (-not $LocalImage) { $LocalImage = "complaint-service:latest" }
-    $BuildContext = $ProjectRoot
+    Write-Host "Building: $LocalImage"
+    docker build -t $LocalImage $ProjectRoot
 }
 
-$Registry = "$AccountId.dkr.ecr.$Region.amazonaws.com"
 $ImageUri = "$Registry/${Repo}:latest"
-
-Write-Host "Building: $LocalImage (context: $BuildContext)"
-docker build -t $LocalImage $BuildContext
 
 Write-Host "Logging in to ECR: $Registry"
 aws ecr get-login-password --region $Region | docker login --username AWS --password-stdin $Registry

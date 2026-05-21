@@ -119,15 +119,16 @@ You do not call port 5001 from the browser. Only the Complaint Service does that
 
 ---
 
-## Path B — Docker (both services in containers)
+## Path B — Docker Compose (all 3 containers: frontend + backends)
 
-Only after Path A works.
+Full guide: [THREE_CONTAINERS.md](./THREE_CONTAINERS.md)
 
 ```powershell
 cd "C:\yaswanth\BTECH\Sem 6\Cloud Computing\Project\complaint-management-system"
 docker compose up --build
 ```
 
+- Frontend UI: http://localhost:5173/
 - Complaint API: http://localhost:5000/
 - Notification API: http://localhost:5001/
 
@@ -146,18 +147,16 @@ minikube start
 kubectl get pods
 ```
 
-Wait until both pods show **Running**:
+Wait until **3** pods show **Running** (`complaint-frontend`, `complaint-service`, `notification-service`).
 
-- `complaint-service-...`
-- `notification-service-...`
-
-Then:
+Port-forward (two terminals):
 
 ```powershell
 kubectl port-forward svc/complaint-service 5000:5000
+kubectl port-forward svc/complaint-frontend 5173:80
 ```
 
-Test: `curl http://localhost:5000/` (same as Path A).
+Open http://localhost:5173
 
 ---
 
@@ -165,40 +164,41 @@ Test: `curl http://localhost:5000/` (same as Path A).
 
 Only if the cluster is still running. Do Path A first so you understand the two services.
 
-### D1 — Create ECR repo for notification image (once)
+### D1 — Create ECR repos (once, skip if they exist)
 
 ```powershell
 aws ecr create-repository --repository-name notification-service --region ap-south-1
+aws ecr create-repository --repository-name complaint-frontend --region ap-south-1
 ```
 
-(Skip if the repo already exists.)
-
-### D2 — Push both Docker images to ECR
+### D2 — Push all 3 Docker images to ECR
 
 ```powershell
 cd "C:\yaswanth\BTECH\Sem 6\Cloud Computing\Project\complaint-management-system"
 .\scripts\push-to-ecr.ps1
 .\scripts\push-to-ecr.ps1 -Service notification
+.\scripts\push-to-ecr.ps1 -Service frontend
 ```
 
-### D3 — Deploy both services to Kubernetes
+### D3 — Deploy all 3 services to Kubernetes
 
 ```powershell
 .\scripts\apply-eks.ps1
 kubectl get pods
 ```
 
-Wait until **2/2 Running** (complaint + notification).
+Wait until **3** pods Running.
 
-### D4 — Use the API
+### D4 — Use the app
 
 ```powershell
 kubectl port-forward svc/complaint-service 5000:5000
+kubectl port-forward svc/complaint-frontend 5173:80
 ```
 
-Browser/frontend still uses **http://localhost:5000** (complaint only).
+Open **http://localhost:5173**
 
-Inside the cluster, complaint pods call `http://notification-service:5001` automatically (set in YAML, not in your `.env`).
+Inside the cluster, complaint pods call `http://notification-service:5001` (not visible to the browser).
 
 ### D5 — If notification pod crashes
 

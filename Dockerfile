@@ -21,7 +21,10 @@ COPY src ./src
 
 RUN addgroup -g 1001 -S app \
   && adduser -S app -u 1001 -G app \
-  && chown -R app:app /usr/src/app
+  && mkdir -p /home/app/.aws \
+  && chown -R app:app /usr/src/app /home/app
+
+ENV HOME=/home/app
 
 USER app
 

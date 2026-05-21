@@ -1,0 +1,48 @@
+# EKS — replace REPLACE_WITH_FRONTEND_ECR_IMAGE before apply
+# e.g. 167217327938.dkr.ecr.ap-south-1.amazonaws.com/complaint-frontend:latest
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: complaint-frontend
+  labels:
+    app: complaint-frontend
+    tier: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: complaint-frontend
+  template:
+    metadata:
+      labels:
+        app: complaint-frontend
+        tier: frontend
+    spec:
+      containers:
+        - name: complaint-frontend
+          image: REPLACE_WITH_FRONTEND_ECR_IMAGE
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi

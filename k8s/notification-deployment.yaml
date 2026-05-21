@@ -24,6 +24,10 @@ spec:
             - name: http
               containerPort: 5001
               protocol: TCP
+          envFrom:
+            - secretRef:
+                name: aws-credentials
+                optional: true
           env:
             - name: PORT
               value: "5001"
