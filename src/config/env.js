@@ -21,4 +21,8 @@ export const env = {
     /** Base URL of Notification Service (local: http://localhost:5001, K8s: http://notification-service:5001) */
     serviceUrl: process.env.NOTIFICATION_SERVICE_URL || 'http://localhost:5001',
   },
+  lambda: {
+    /** Phase 17 — complaint-stats Lambda function name (empty = analytics endpoint returns 503) */
+    statsFunctionName: process.env.LAMBDA_STATS_FUNCTION?.trim() || '',
+  },
 };

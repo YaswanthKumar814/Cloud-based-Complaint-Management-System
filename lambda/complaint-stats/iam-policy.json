@@ -1,0 +1,21 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DynamoDBReadComplaints",
+      "Effect": "Allow",
+      "Action": ["dynamodb:Scan", "dynamodb:GetItem", "dynamodb:Query"],
+      "Resource": "arn:aws:dynamodb:ap-south-1:167217327938:table/Complaints"
+    },
+    {
+      "Sid": "CloudWatchLogs",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:ap-south-1:167217327938:*"
+    }
+  ]
+}

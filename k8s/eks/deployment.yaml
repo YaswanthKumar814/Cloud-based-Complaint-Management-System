@@ -51,6 +51,8 @@ spec:
               value: "complaint-service"
             - name: AWS_XRAY_DAEMON_ADDRESS
               value: "xray-service.default:2000"
+            - name: LAMBDA_STATS_FUNCTION
+              value: "complaint-stats-lambda"
           readinessProbe:
             httpGet:
               path: /

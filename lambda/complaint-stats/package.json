@@ -1,0 +1,11 @@
+{
+  "name": "complaint-stats-lambda",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Phase 17 — lightweight complaint statistics from DynamoDB",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.812.0",
+    "@aws-sdk/lib-dynamodb": "^3.812.0"
+  }
+}

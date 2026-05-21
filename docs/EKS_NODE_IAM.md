@@ -68,9 +68,16 @@ You can use **one combined inline policy** (simplest) or separate policies.
         "comprehend:DetectKeyPhrases",
         "secretsmanager:GetSecretValue",
         "xray:PutTraceSegments",
-        "xray:PutTelemetryRecords"
+        "xray:PutTelemetryRecords",
+        "lambda:InvokeFunction"
       ],
       "Resource": "*"
+    },
+    {
+      "Sid": "InvokeComplaintStatsLambda",
+      "Effect": "Allow",
+      "Action": ["lambda:InvokeFunction"],
+      "Resource": "arn:aws:lambda:ap-south-1:167217327938:function:complaint-stats-lambda"
     },
     {
       "Sid": "SecretsManagerNotificationSecret",
@@ -226,3 +233,4 @@ If you see `using .env fallback` — secret missing or `GetSecretValue` denied; 
 | Secrets Manager | notification-service | secretsmanager:GetSecretValue |
 | Comprehend | complaint-service | comprehend:Detect* |
 | X-Ray | complaint-service | xray:Put* |
+| Lambda | complaint-service (Phase 17) | lambda:InvokeFunction → `complaint-stats-lambda` |

@@ -45,6 +45,8 @@ spec:
               value: "complaint-service"
             - name: STRUCTURED_LOGS
               value: "true"
+            - name: LAMBDA_STATS_FUNCTION
+              value: "complaint-stats-lambda"
           readinessProbe:
             httpGet:
               path: /
