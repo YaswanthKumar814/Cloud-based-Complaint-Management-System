@@ -43,7 +43,10 @@ Open **http://localhost:5173** — Cognito: [docs/COGNITO_FRONTEND.md](docs/COGN
 
 Complaint AI (Amazon Comprehend): [docs/COMPREHEND_AI.md](docs/COMPREHEND_AI.md).
 
-Email/SNS notifications: [docs/NOTIFICATIONS.md](docs/NOTIFICATIONS.md).
+**What to do next (start here):** [docs/NEXT_STEPS.md](docs/NEXT_STEPS.md)  
+**Which `.env` for each terminal:** [docs/LOCAL_RUN.md](docs/LOCAL_RUN.md)  
+**Microservices architecture:** [docs/MICROSERVICES.md](docs/MICROSERVICES.md)  
+**Email/SNS (AWS Console):** [docs/NOTIFICATIONS.md](docs/NOTIFICATIONS.md)
 
 ## Verify Phase 2
 

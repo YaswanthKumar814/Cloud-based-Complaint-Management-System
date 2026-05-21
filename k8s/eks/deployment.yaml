@@ -39,10 +39,8 @@ spec:
               value: "Complaints"
             - name: S3_BUCKET_NAME
               value: "complaint-system-files-yaswanth"
-            - name: SES_FROM_EMAIL
-              value: "yaswanthkumarpulapa@gmail.com"
-            - name: ADMIN_EMAIL
-              value: "yaswanthkumarpulapa@gmail.com"
+            - name: NOTIFICATION_SERVICE_URL
+              value: "http://notification-service:5001"
           readinessProbe:
             httpGet:
               path: /

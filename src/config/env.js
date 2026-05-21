@@ -17,14 +17,8 @@ export const env = {
     /** S3 bucket for complaint attachments (pre-signed uploads). */
     bucketName: process.env.S3_BUCKET_NAME || '',
   },
-  ses: {
-    /** Verified sender email in Amazon SES */
-    fromEmail: process.env.SES_FROM_EMAIL || '',
-    /** Admin inbox that receives complaint alerts */
-    adminEmail: process.env.ADMIN_EMAIL || '',
-  },
-  sns: {
-    /** Optional: SNS topic ARN for simple text alerts (leave empty to skip SNS) */
-    topicArn: process.env.SNS_TOPIC_ARN || '',
+  notification: {
+    /** Base URL of Notification Service (local: http://localhost:5001, K8s: http://notification-service:5001) */
+    serviceUrl: process.env.NOTIFICATION_SERVICE_URL || 'http://localhost:5001',
   },
 };

@@ -1,0 +1,59 @@
+# EKS — replace REPLACE_WITH_NOTIFICATION_ECR_IMAGE before apply
+# e.g. 167217327938.dkr.ecr.ap-south-1.amazonaws.com/notification-service:latest
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+  labels:
+    app: notification-service
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+        tier: backend
+    spec:
+      containers:
+        - name: notification-service
+          image: REPLACE_WITH_NOTIFICATION_ECR_IMAGE
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 5001
+              protocol: TCP
+          env:
+            - name: PORT
+              value: "5001"
+            - name: NODE_ENV
+              value: "production"
+            - name: AWS_REGION
+              value: "ap-south-1"
+            - name: SES_FROM_EMAIL
+              value: "yaswanthkumarpulapa@gmail.com"
+            - name: ADMIN_EMAIL
+              value: "yaswanthkumarpulapa@gmail.com"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5001
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5001
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi

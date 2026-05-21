@@ -1,5 +1,8 @@
 # Email & SNS notifications (beginner guide)
 
+> **Architecture update:** SES/SNS now run in the **Notification Service** (`services/notification-service/`).  
+> Configure `.env` there. Complaint Service calls it over HTTP — see [MICROSERVICES.md](./MICROSERVICES.md).
+
 ## What SES and SNS do
 
 | Service | Simple meaning |
@@ -13,7 +16,7 @@
 
 ## `.env` variables
 
-Add to project root `.env` (same folder as backend `package.json`):
+Add to `services/notification-service/.env`:
 
 ```env
 SES_FROM_EMAIL=you@example.com
@@ -172,7 +175,7 @@ Description: Emergency fire near bathroom
 |-------|-----|
 | `MessageRejected` Email address not verified | Verify **both** FROM and TO in SES |
 | `AccessDenied` | Add `ses:SendEmail` IAM policy |
-| Email skipped in logs | Set `SES_FROM_EMAIL` and `ADMIN_EMAIL` in `.env`, restart server |
+| Email skipped in logs | Set `SES_FROM_EMAIL` and `ADMIN_EMAIL` in `services/notification-service/.env`, restart notification service |
 | Complaint saves but no email | Notifications never block API — read terminal `[notification]` logs |
 | Wrong region | SES + app must use **ap-south-1** |
 

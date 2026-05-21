@@ -1,0 +1,23 @@
+# Local two-service stack
+# 1. Copy services/notification-service/.env.example → services/notification-service/.env (SES emails)
+# 2. Ensure root .env has DynamoDB/S3 (no SES needed on complaint service)
+# 3. docker compose up --build
+
+services:
+  notification-service:
+    build: ./services/notification-service
+    ports:
+      - "5001:5001"
+    env_file:
+      - ./services/notification-service/.env
+
+  complaint-service:
+    build: .
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    environment:
+      NOTIFICATION_SERVICE_URL: http://notification-service:5001
+    depends_on:
+      - notification-service

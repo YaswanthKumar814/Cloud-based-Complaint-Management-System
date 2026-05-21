@@ -1,6 +1,7 @@
 node_modules/
 .env
 .env.local
+services/notification-service/.env
 *.log
 .DS_Store
 coverage/

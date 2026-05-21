@@ -26,13 +26,10 @@ Description: ${complaint.description}
 `.trim();
 }
 
-/**
- * Send email via SES. Never throws — logs errors only.
- */
 async function sendEmail(subject, bodyText) {
   if (!isEmailConfigured()) {
     console.warn(
-      '[notification] Email skipped — set SES_FROM_EMAIL and ADMIN_EMAIL in .env',
+      '[notification] Email skipped — set SES_FROM_EMAIL and ADMIN_EMAIL',
     );
     return false;
   }
@@ -60,9 +57,6 @@ async function sendEmail(subject, bodyText) {
   }
 }
 
-/**
- * Optional SNS text message. Never throws.
- */
 async function publishSns(message) {
   if (!env.sns.topicArn) {
     return false;
@@ -84,20 +78,18 @@ async function publishSns(message) {
   }
 }
 
-/**
- * Called after POST /api/complaints succeeds.
- */
 export async function notifyComplaintCreated(complaint) {
   const subject = `[New Complaint] ${complaint.title}`;
   const body = `A new complaint was submitted.\n\n${formatComplaintDetails(complaint)}`;
 
-  await sendEmail(subject, body);
-  await publishSns(`New complaint: ${complaint.complaintId} — ${complaint.title} (${complaint.priority})`);
+  const emailSent = await sendEmail(subject, body);
+  const snsPublished = await publishSns(
+    `New complaint: ${complaint.complaintId} — ${complaint.title} (${complaint.priority})`,
+  );
+
+  return { emailSent, snsPublished };
 }
 
-/**
- * Called after PUT /api/complaints/:id/status succeeds.
- */
 export async function notifyStatusUpdated(complaint) {
   const isResolved = complaint.status === 'Resolved';
   const subject = isResolved
@@ -110,8 +102,10 @@ export async function notifyStatusUpdated(complaint) {
 
   const body = `${intro}\n\n${formatComplaintDetails(complaint)}`;
 
-  await sendEmail(subject, body);
-  await publishSns(
+  const emailSent = await sendEmail(subject, body);
+  const snsPublished = await publishSns(
     `Complaint ${complaint.complaintId} status: ${complaint.status} (priority: ${complaint.priority})`,
   );
+
+  return { emailSent, snsPublished };
 }

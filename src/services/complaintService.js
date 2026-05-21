@@ -8,7 +8,7 @@ import { analyzeComplaintText } from './aiAnalysisService.js';
 import {
   notifyComplaintCreated,
   notifyStatusUpdated,
-} from './notificationService.js';
+} from './notificationClient.js';
 
 const TABLE = env.dynamodb.tableName;
 

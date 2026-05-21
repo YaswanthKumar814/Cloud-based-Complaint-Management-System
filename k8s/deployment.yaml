@@ -35,6 +35,8 @@ spec:
               value: "Complaints"
             - name: S3_BUCKET_NAME
               value: "complaint-system-files-yaswanth"
+            - name: NOTIFICATION_SERVICE_URL
+              value: "http://notification-service:5001"
           readinessProbe:
             httpGet:
               path: /
